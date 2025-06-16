@@ -30,6 +30,22 @@ def qft_10_main():
     }
     return counts
 
+def qft_10_remote_main():
+    """Create and return a QFT circuit for 10 qubits."""
+    num_qubits = 10
+    qc = create_qft_circuit(num_qubits)
+    qc_local, qc_remote, qc_quantum = prepare_measurements(qc, num_qubits)
+
+    counts_remote_torino = noisy_remote_simulator_2(qc_remote, "heron_model.pkl")
+    counts_remote_brisbane = noisy_remote_simulator_2(qc_remote, "eagle_brisbane_model.pkl")
+    counts_remote_sherbrooke = noisy_remote_simulator_2(qc_remote, "eagle_sherbrooke_model.pkl")
+    counts = {
+        "torino_remote": counts_remote_torino,
+        "brisbane_remote": counts_remote_brisbane,
+        "serbrooke_remote": counts_remote_sherbrooke
+    }
+    return counts
+
 def qft_5_main():
     """Create and return a QFT circuit for 5 qubits."""
     num_qubits = 5

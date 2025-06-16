@@ -1,12 +1,13 @@
 from qinb import qinb_main
 from logger import data_logger
-from qft_circuits import qft_3_main, qft_5_main, qft_10_main
+from qft_circuits import *
 
 run_list = [
     ["Quantum Interference Noise Benchmarking", qinb_main],
     ["QFT 3 Qubits", qft_3_main],
     ["QFT 5 Qubits", qft_5_main],
-    ["QFT 10 Qubits", qft_10_main]
+    ["QFT 10 Qubits", qft_10_main],
+    ["QFT 10 Qubits - All remote models", qft_10_remote_main]
 ]
 
 
