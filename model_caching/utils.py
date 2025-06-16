@@ -2,6 +2,7 @@ from qiskit_aer import AerSimulator
 from qiskit_aer.noise import NoiseModel
 from qiskit_ibm_runtime.fake_provider import FakeManilaV2
 from qiskit import transpile
+import pickle
 
 ## Module Imports
 from qiskit_ibm_runtime import QiskitRuntimeService
@@ -25,6 +26,7 @@ def ibm_account_connect():
         name="eddie_ibm_qc", # Optionally name this set of credentials.
         overwrite=True # Only needed if you already have Cloud credentials.
         )
+        # print("Account Created - Continuing.")
     except:
         print("Account Exists - Continuing.")
     return None
@@ -38,34 +40,47 @@ def noisy_local_simulator(qc):
     # Transpile circuit
     qc_t = transpile(qc, simulator)
     # Run simulation
-    shots = 1024
+    shots = 4096
     # Note: shots is set to 1024, but can be adjusted as needed.
     job = simulator.run(qc_t, shots=shots)
     result = job.result()
     counts = result.get_counts()
     return dict(sorted(counts.items(), key=lambda x: int(x[0], 2)))
 
+def load_model_from_file():
+    filename = "cached_noise_model.pkl"
+    with open(filename, "rb") as f:
+        noise_model = pickle.load(f)
+    return noise_model
+
 def noisy_remote_simulator(qc):
-    return qc
+    shots = 4096
+    noise_model = load_model_from_file()
+    simulator = AerSimulator(noise_model=noise_model)
+    qc_t = transpile(qc, simulator)
+    job = simulator.run(qc_t, shots=shots)
+    result = job.result()
+    counts = result.get_counts()
+    return dict(sorted(counts.items(), key=lambda x: int(x[0], 2)))
 
 def ibm_quantum_backend(qc):
-    ibm_account_connect()
+    # ibm_account_connect()
 
     ## Run on the quantum computer.
-    service = QiskitRuntimeService()
+    service = QiskitRuntimeService(name="eddie_ibm_qc")
+
     backend = service.least_busy(simulator=False, operational=True, min_num_qubits=1)
     sampler = Sampler(mode=backend)
     pm = generate_preset_pass_manager(backend=backend, optimization_level=1)
     ## Transpilation of the current circuit.
     isa_circuit = pm.run(qc)
-    print("Circuit Transpiled")
-    # print("Job Queued")
     ## Run the job on the quantum computer
     job = sampler.run([isa_circuit])
     pub_result = job.result()
     # print("Job Complete")
+    counts = pub_result[0].data.meas.get_counts()
 
-    return pub_result[0].data.c0.get_counts() # pub_result.data.meas.get_counts()
+    return dict(sorted(counts.items(), key=lambda x: int(x[0], 2)))
 
 
 def prepare_measurements(qc, num_qubits):
@@ -76,9 +91,9 @@ def prepare_measurements(qc, num_qubits):
 
     # Apply explicit measurement
     qc_local.measure(range(num_qubits), range(num_qubits))
-    # qc_remote.measure(range(num_qubits), range(num_qubits))
+    qc_remote.measure(range(num_qubits), range(num_qubits))
 
     # measure_all auto-adds classical bits
-    # qc_quantum.measure_all()
+    qc_quantum.measure_all()
 
-    return qc_local, qc_local, qc_local
+    return qc_local, qc_remote, qc_quantum

@@ -42,8 +42,8 @@ def qinb_main():
     """Main function to run the QINB circuit and return counts."""
     qc_local, qc_remote, qc_quantum = qinb_circuit_creation()
     counts_local = noisy_local_simulator(qc_local)
-    counts_remote = noisy_local_simulator(qc_remote)
-    counts_quantum = noisy_local_simulator(qc_quantum)
+    counts_remote = noisy_remote_simulator(qc_remote)
+    counts_quantum = ibm_quantum_backend(qc_quantum)
     counts = {
         "local": counts_local,
         "remote": counts_remote,
