@@ -150,16 +150,19 @@ def divergence_prep(complete_df):
     groupedData = complete_df.groupby(['Source'])['Mean']
     distribution = []
     for n, d in groupedData:
-        distribution.append(d.values.tolist())
-    local_dist = distribution[0]
-    remote_dist = distribution[1]
-    quantum_dist = distribution[2]
+        distribution.append([n, d.values.tolist()])
+    
+    
+    quantum_dist = distribution[1]
+    print(quantum_dist)
 
-    print("JS(local || quantum):", js_divergence(local_dist, quantum_dist))
-    print("JS(remote || quantum):", js_divergence(remote_dist, quantum_dist))
+    # for i in range(len(distribution))
 
-    print("KL(local || quantum):", kl_divergence(local_dist, quantum_dist))
-    print("KL(remote || quantum):", kl_divergence(remote_dist, quantum_dist))
+    # print("JS(local || quantum):", js_divergence(local_dist, quantum_dist))
+    # print("JS(remote || quantum):", js_divergence(remote_dist, quantum_dist))
+
+    # print("KL(local || quantum):", kl_divergence(local_dist, quantum_dist))
+    # print("KL(remote || quantum):", kl_divergence(remote_dist, quantum_dist))
 
     return 0
 

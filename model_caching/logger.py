@@ -1,6 +1,6 @@
 import pandas as pd
 
-def data_logger(data, filename='general'):
+def data_logger(data, num_qubits, filename='general' ):
 
 
     # Flatten the data into long format
@@ -23,7 +23,7 @@ def data_logger(data, filename='general'):
     df.sort_values(by=['Run', 'Source', 'Binary'], inplace=True)
 
     # Write to Excel
-    filename_ext = str(filename.__name__) + '.xlsx'
+    filename_ext = str(filename.__name__) + "_" + str(num_qubits) + '.xlsx'
     df.to_excel(filename_ext, index=False)
 
             
