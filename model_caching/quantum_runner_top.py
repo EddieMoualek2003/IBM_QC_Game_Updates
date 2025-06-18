@@ -26,5 +26,4 @@ if __name__ == "__main__":
         print("Running iteration", i + 1)
         counts = run_list[choice][1](num_qubits)
         counts_array.append([i, counts])
-
-    data_logger(counts_array, run_list[choice][1], num_qubits)
+        data_logger(counts_array, run_list[choice][1], str(num_qubits) + str(" Iteration ") +str(i))

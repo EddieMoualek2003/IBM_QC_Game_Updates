@@ -1,6 +1,6 @@
 import pandas as pd
 
-def data_logger(data, num_qubits, filename='general' ):
+def data_logger(data, filename, num_qubits):
 
 
     # Flatten the data into long format
